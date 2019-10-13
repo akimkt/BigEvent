@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>文章列表</title>
+    <link rel="stylesheet" href="js/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/reset.css">
+    <link rel="stylesheet" href="css/iconfont.css">
+    <link rel="stylesheet" href="css/main.css">
+    <script src="js/jquery-1.12.4.min.js"></script>
+</head>
+
+<body>
+    <div class="container-fluid">
+        <div class="common_title">
+            用户信息修改
+        </div>
+        <div class="container-fluid common_con">
+            <form class="form-horizontal article_form userDetail">
+                <div class="form-group">
+                    <label for="username" class="col-sm-2 control-label">用户名称：</label>
+                    <div class="col-sm-4">
+                        <input type="text" class="form-control" id="username" name="username" value="李思思">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="nickname" class="col-sm-2 control-label">昵称：</label>
+                    <div class="col-sm-4">
+                        <input type="text" class="form-control" id="nickname" name="nickname" value="思思">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="email" class="col-sm-2 control-label">邮箱：</label>
+                    <div class="col-sm-4">
+                        <input type="text" class="form-control" id="email" name="email" value="lisisi@126.com">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="user_pic" class="col-sm-2 control-label">用户图标：</label>
+                    <div class="col-sm-10">
+                        <img src="images/2.jpg" alt="" class="user_pic">
+                        <input type="file" id="user_pic" name="user_pic">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="password" class="col-sm-2 control-label">密码：</label>
+                    <div class="col-sm-4">
+                        <input type="password" class="form-control" id="password" name="password" value="12345678">
+                    </div>
+                </div>
+
+
+                <div class="form-group">
+                    <div class="col-sm-offset-2 col-sm-10">
+                        <button type="button" class="btn btn-success">修改</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <script src="./js/config.js"></script>
+    <script src="./js/user.js"></script>
+    <script src="./js/bootstrap/js/bootstrap.min.js"></script>
+    <!-- 模态提示框 -->
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">提示信息</h4>
+                </div>
+                <div class="modal-body">
+                    。。。
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">好的</button>
+                    <!-- <button type="button" class="btn btn-primary yesout">确定</button> -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        //加载用户详细信息
+        user.userDetail({
+            callback: function (res) {
+                if (res.code === 200) {
+                    var data = res.data;
+                    $.each(data, function (key, value) {
+                        //遍历  需要获取data中的key ，将key分别设置为对应的input标题方便添加value
+                        //遇到图片位置的时候单独设置将文本域中的图片元素src设置为当前key
+                        if (key == 'user_pic') {
+                            $('.user_pic').prop('src', value);
+                        } else {
+                            $('#' + key).val(value);
+                        }
+                        
+                    })
+
+                }
+
+            }
+        })
+        // 修改用户详细信息,修改前分别设置name 方便用formdata获取 表单值
+        $('.btn-success').click(function () {
+            var fd = new FormData($('.article_form')[0]);
+            console.log(fd.get('username'))
+            if (fd.get('username') == '' ||
+                fd.get('nickname') == '' ||
+                fd.get('email') == '' ||
+                fd.get('user_pic') == '' ||
+                fd.get('password') == ''
+            ) {
+                $('#myModal').modal('show').find('.modal-body').text('请填写完整')
+            } else {
+                user.userEdit({
+                    data : fd,
+                    callback : function(res){
+                        $('#myModal').modal('show')
+                        $('#myModal').modal('show').find('.modal-body').text('修改完成')
+                    }
+                })
+            }
+
+        })
+
+    </script>
+</body>
+
+</html>
